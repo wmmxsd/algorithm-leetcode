@@ -1,9 +1,5 @@
 package leetcode.binaryTreeExpandedIntoLinkedList114;
 
-import leetcode.invertbinarytree226.InvertBinaryTree;
-
-import java.util.TreeMap;
-
 /**
  * 114. 二叉树展开为链表
  * 给你二叉树的根结点 root ，请你将它展开为一个单链表：
@@ -65,6 +61,36 @@ public class BinaryTreeExpandedIntoLinkedList {
         flatten(root.right);
     }
 
+    /**
+     * 后序遍历：3-4-2-6-5-1
+     * 后序遍历变形：
+     * <code>
+     *     postOrder(node.right);
+     *     postOrder(node.left);
+     *     //toDo
+     * </code>
+     * 后序遍历变形：6-5-4-3-2-1
+     * 可以采用变形的后序遍历，然后将当前节点的左子树置为null，右子树置为上一个节点
+     * @param root
+     */
+
+    /**
+     * 记录遍历过程中上一个节点
+     */
+    private TreeNode node;
+
+    public void flatten1(TreeNode root) {
+        if (root == null)
+            return;
+
+        flatten1(root.right);
+        flatten1(root.left);
+
+        root.left = null;
+        root.right = node;
+        node = root;
+    }
+
     private static class TreeNode {
         int val;
         TreeNode left;
@@ -86,11 +112,12 @@ public class BinaryTreeExpandedIntoLinkedList {
         //[1,2,5,3,4,null,6]
         TreeNode root = new TreeNode(1);
         root.left = new TreeNode(2);
-        /*root.right = new TreeNode(5);
+        root.right = new TreeNode(5);
         root.left.left = new TreeNode(3);
         root.left.right = new TreeNode(4);
-        root.right.right = new TreeNode(6);*/
-        demo.flatten(root);
+        root.right.right = new TreeNode(6);
+        //demo.flatten(root);
+        demo.flatten1(root);
     }
 
 }
