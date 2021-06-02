@@ -1,9 +1,9 @@
-package findingduplicatesubtrees652;
+package leetcode.findingduplicatesubtrees652;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Vector;
+import leetcode.minimumdepthofbinarytree111.MinimumDepthOfBinaryTree;
+
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * 652. 寻找重复的子树
@@ -37,20 +37,33 @@ import java.util.Vector;
  * @date @2021/6/1 22:16
  */
 public class FindingDuplicateSubtrees {
-    private Map<TreeNode, Integer> nodeCountsMap = new HashMap<>();
-    private List<TreeNode> result = new Vector<>();
+    private Map<String, Integer> nodeCountsMap = new HashMap<>();
+    private List<TreeNode> result = new  ArrayList<>();
 
     public List<TreeNode> findDuplicateSubtrees(TreeNode root) {
-        return preOrder(root);
+        preOrder(root);
+        return result;
     }
 
-    private List<TreeNode> preOrder(TreeNode root) {
+    /**
+     * 使用字符串记录子树
+     */
+    private String preOrder(TreeNode root) {
         if (root == null) {
-            return null;
+            //"#"记录空节点
+            return "#";
         }
-        //
-        preOrder(root.left);
-        preOrder(root.right);
+        StringBuilder subTreeBuilder = new StringBuilder(root.val + "");
+        String left = preOrder(root.left);
+        String right = preOrder(root.right);
+        String subTreeStr = subTreeBuilder.append(",").append(left).append(",").append(right).toString();
+        Integer count = nodeCountsMap.getOrDefault(subTreeStr, 0);
+        //解决当出现三颗及以上数量的子树时重复添加的问题
+        if (count == 1) {
+            result.add(root);
+        }
+        nodeCountsMap.put(subTreeStr, count + 1);
+        return subTreeStr;
     }
 
     private static class TreeNode {
@@ -67,5 +80,30 @@ public class FindingDuplicateSubtrees {
             this.left = left;
             this.right = right;
         }
+
+        @Override
+        public String toString() {
+            return "TreeNode{" + "val=" + val + ", left=" + left + ", right=" + right + '}';
+        }
+    }
+
+    public static void main(String[] args) {
+        TreeNode root = new TreeNode(1);
+        TreeNode treeNode0 = new TreeNode(2);
+        TreeNode treeNode1 = new TreeNode(3);
+        TreeNode treeNode2 = new TreeNode(4);
+        TreeNode treeNode3 = new TreeNode(2);
+        TreeNode treeNode4 = new TreeNode(4);
+        TreeNode treeNode5 = new TreeNode(4);
+
+        root.left = treeNode0;
+        root.right = treeNode1;
+        treeNode0.left = treeNode2;
+        treeNode1.left = treeNode3;
+        treeNode1.right = treeNode4;
+        treeNode3.left = treeNode5;
+
+        FindingDuplicateSubtrees demo = new FindingDuplicateSubtrees();
+        System.out.println(demo.findDuplicateSubtrees(root));
     }
 }
